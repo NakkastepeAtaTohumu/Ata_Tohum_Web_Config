@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script> -->
+    <script src="./p5.js"></script>
+    <script src="./hygrometers.js"></script>
+    <script src="./devices.js"></script>
+    <script src="./logs.js"></script>
+    <script src="./display.js"></script>
+    <script src="./greenhouse_display.js"></script>
+    <script src="./logs_display.js"></script>
+    <script src="./group_display.js"></script>
+    <script src="./device_display.js"></script>
+    <script src="./system.js"></script>
+    <script src="./modules.js"></script>
+    <script src="./connection.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap" rel="stylesheet">
+
+    <title>Ata Tohumu</title>
+
+    <style>
+        .p5Canvas,
+        body,
+        html {
+            margin: 0px;
+            padding: 0px;
+            border: 0;
+            overflow: hidden;
+            display: block;
+
+            background-color: black;
+        }
+
+        .bar_container {
+            position: absolute;
+            bottom: 0%;
+            background-color: transparent;
+            float: none;
+            height: 20vh;
+
+            display: flex;
+        }
+
+        .card {
+            float: none;
+            margin: 0;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            display: flex;
+
+            width: fit-content;
+        }
+
+        .container {
+            height: 99vh;
+        }
+
+        .buttons_container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log_scroll_button {
+            height: 33.33%;
+            border-radius: 0px;
+
+            background-color: #404040;
+            border-style: none;
+            width: 5vw;
+        }
+
+        #logs_display {
+            width: 95vw;
+        }
+
+        #group_display {
+            height: inherit;
+            margin: 5px;
+            right: 100px
+        }
+
+        #device_display {
+            height: inherit;
+            margin: 25px;
+            left: 100px
+        }
+
+        #greenhouse_display {
+            margin: 25px;
+            right: 100px
+        }
+
+        .container2 {
+            margin:5px;
+            bottom: 0%;
+            top: 0%;
+        }
+
+        .p5 {
+            position: relative;
+            top: 50%;
+            transform: translate(0%, -50%);
+            float: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="container2">
+                <div id="greenhouse_display" class="p5">
+                </div>
+            </div>
+
+            <div class="container2">
+                <div id="group_display" class="p5">
+                </div>
+            </div>
+
+            <div class="container2">
+                <div id="device_display" class="p5">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bar_container">
+        <div id="logs_display" class="p5">
+
+        </div>
+        <div class="buttons_container">
+            <button class="log_scroll_button" onclick="logsScrollPos+=3">Up</button>
+            <button class="log_scroll_button" onclick="logsScrollPos = Math.max(logsScrollPos - 3, 0)">Down</button>
+            <button class="log_scroll_button"
+                onclick="settings.display_debug_logs = !settings.display_debug_logs">Debug</button>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono" rel="stylesheet">
+
+<head>
+    <link rel="stylesheet" href="./style.css">
+
+    <title>ESP Input Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="./p5.js"></script>
+    <script src="./hygrometers.js"></script>
+    <script src="./devices.js"></script>
+    <script src="./logs.js"></script>
+    <script src="./display.js"></script>
+    <script src="./greenhouse_display.js"></script>
+    <script src="./system.js"></script>
+    <script src="./modules.js"></script>
+    <script src="./display_html.js"></script>
+    <script src="./connection.js"></script>
+
+    <script src="./fGMS_REST.js"></script>
+
+    <script>
+        //greenhouse_width = 750;
+        //greenhouse_height = 750;
+
+        let prev_selected = -1;
+        function setSize() {
+            let x = $("#size_x").val();
+            let y = $("#size_y").val();
+
+            hygrometers.setGreenhouseSize(x, y);
+        }
+
+        function ui_setHygrometer() {
+            let id = selectedHygrometer ? selectedHygrometer.id : -1;
+
+            let module_id = $("#module_f").val();
+            let channel = $("#channel_f").val();
+
+            let device = devices.getDeviceByName(module_id);
+
+            if (device)
+                module_id = device.mac;
+            else {
+                let device = devices.getDeviceByMAC(module_id);
+                if (!device)
+                    return;
+            }
+
+            let x = $("#x_f").val();
+            let y = $("#y_f").val();
+
+            let min = $("#min_f").val();
+            let max = $("#max_f").val();
+
+            hygrometers.setHygrometer(module_id, channel, x, y, min, max, id);
+        }
+
+        function ui_removeHygrometer() {
+            if (selectedHygrometer)
+                selectedHygrometer.remove(id);
+        }
+
+        function ui_refreshSelectedHygrometer() {
+            if (selectedHygrometer) {
+
+                let module_id = selectedHygrometer.module;
+
+                let device = devices.getDeviceByMAC(module_id);
+                if (device)
+                    module_id = device.name;
+
+                $("#module_f").val(module_id);
+                $("#channel_f").val(selectedHygrometer.channel);
+
+                $("#x_f").val(Math.floor(selectedHygrometer.pos.x * 100 + 0.5) / 100);
+                $("#y_f").val(Math.floor(selectedHygrometer.pos.y * 100 + 0.5) / 100);
+
+                $("#min_f").val(Math.floor(selectedHygrometer.map.min * 100 + 0.5) / 100);
+                $("#max_f").val(Math.floor(selectedHygrometer.map.max * 100 + 0.5) / 100);
+
+                $("#add_set_btn").text("Set Edited");
+                $("#remove_btn").show(0);
+            }
+            else {
+                $("#remove_btn").hide(0);
+                $("#add_set_btn").text("Add New");
+            }
+
+            ui_updateSelectedHygrometerValues();
+        }
+
+        function ui_updateSelectedHygrometerValues() {
+            if (selectedHygrometer) {
+                $("#volts").text("Volts: " + Math.floor(selectedHygrometer.volts * 100 + 0.5) / 100);
+                $("#value").text("Percentage: " + Math.floor(selectedHygrometer.data * 100 + 0.5));
+            }
+            else {
+                $("#volts").text("Volts: ");
+                $("#value").text("Percentage: ");
+            }
+        }
+
+        setInterval(ui_updateSelectedHygrometerValues, 1000);
+
+        let devices_display = new DevicesDisplay("modules_display");
+        devices_display.filter.push("hygro");
+
+        function ui_updateModules() {
+            devices_display.refresh();
+        }
+
+        setInterval(ui_updateModules, 1000);
+
+        function ui_tab(tab) {
+            let tab_items = ["#config_tab", "#modules_tab", "#groups_tab"];
+
+            for (let i in tab_items) {
+                $(tab_items[i])[0].style.display = (i == tab) ? "block" : "none";
+                $(tab_items[i] + "_button")[0].className = (i == tab) ? "tab-button-active" : "tab-button";
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <div id="container" class="center">
+        <div class="card">
+            <div class="ui-container" style="align-items: center; justify-content: space-around;">
+                <div>
+                    <div style="text-align: center; font-size: 50px;">Ata Tohum</div>
+                    <div style="text-align: center;">Modular Greenhouse System</div>
+                </div>
+                <div style="text-align: center;font-size: 50px; margin-inline: 25px">Hygrometers</div>
+            </div>
+
+            <br>
+
+            <div class="ui-container">
+                <div>
+                    <div id="greenhouse_display" class="p5" onclick="ui_refreshSelectedHygrometer()">
+                    </div>
+
+                    <div style="width: 100%;">
+                        W: <input type="text" id="size_x" class="input-round" style="width: 50px;">
+                        H: <input type="text" id="size_y" class="input-round" style="width: 50px;">
+                        <button onclick="setSize()" class="input-button">Set Size</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="ui-container tab" style="margin-inline: 25px; max-height: 50px;">
+                        <button onclick="ui_tab(0)" class="tab-button-active" id="config_tab_button">Config</button>
+                        <button onclick="ui_tab(1)" class="tab-button" id="modules_tab_button">Modules</button>
+                        <button onclick="ui_tab(2)" class="tab-button" id="groups_tab_button">Groups</button>
+                    </div>
+
+                    <div style="display: block;" id="config_tab">
+                        <div class="ui-container-vertical" style="margin-inline: 20px;" id="config_display">
+                            <div class="panel-container">
+                                Hygrometer Config:
+                                <div class="panel">
+                                    <div>
+                                        <div class="panel-value ui-container" style="justify-content: space-between;"> Module: <input type="text" id="module_f"
+                                                class="input-round" style="width: 200px;">
+                                        </div>
+                                        <div class="panel-value ui-container" style="justify-content: space-between;"> Channel: <input type="text" id="channel_f"
+                                                class="input-round" style="width: 50px;">
+                                        </div>
+
+                                        <div class="ui-container panel-value">
+                                            <div style="margin-inline: 5px;"> X: <input type=" text" id="x_f"
+                                                    class="input-round" style="width: 50px;">
+                                            </div>
+                                            <div style="margin-inline: 5px;"> Y: <input type="text" id="y_f"
+                                                    class="input-round" style="width: 50px;">
+                                            </div>
+                                        </div>
+
+                                        <div class="ui-container panel-value">
+                                            <div style="margin-inline: 5px;"> Min: <input type="text" id="min_f"
+                                                    class="input-round" style="width: 50px;">
+                                            </div>
+                                            <div style="margin-inline: 5px;"> Max: <input type="text" id="max_f"
+                                                    class="input-round" style="width: 50px;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="justify-content: space-between;" class="ui-container panel-value">
+                                        <button onclick="ui_setHygrometer()" class="input-button" id="add_set_btn">Add
+                                            New</button>
+                                        <button onclick="ui_removeHygrometer()" class="input-button"
+                                            id="remove_btn">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-container">
+                                Selected Hygrometer:
+                                <div class="panel">
+                                    <div class="panel-value" id="volts">
+                                        Volts:
+                                    </div>
+                                    <div class="panel-value" id="value">
+                                        Percentage:
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="panel-container">
+                                Controls:
+                                <div class="panel ui-container">
+                                    <button onclick="save()" class="input-button" id="save_btn">Save</button>
+                                    <button onclick="restart()" class="input-button" id="restart_btn">Restart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+
+                        <!-- <div id="err-container">
+                <div id="err-div">
+                    Disconnected from ESP32!
+                </div>
+            </div> -->
+                    </div>
+
+                    <div style="margin-inline: 20px; display: none;" id="modules_tab">
+                        <div class="ui-container-vertical" id="modules_display">
+                        </div>
+                    </div>
+
+                    <div style="margin-inline: 20px; display: none;" id="groups_tab">
+                        <div class="ui-container-vertical" id="modules_display">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

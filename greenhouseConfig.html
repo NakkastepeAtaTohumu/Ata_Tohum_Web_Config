@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap" rel="stylesheet">
+
+<head>
+    <link rel="stylesheet" href="./style.css">
+
+    <title>ESP Input Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="card">
+        <div id="container">
+            <div id="ui-container">
+                <div style="text-align: center;"> Greenhouse Config</div>
+
+
+                <div style="width: max-content;">
+                    Width: <input type="text" id="size_x" class="input-round" style="width: 50px;">
+                    Height: <input type="text" id="size_y" class="input-round" style="width: 50px;">
+                    <button onclick="setSize()" class="input-button">Set Size</button>
+                </div>
+            </div>
+
+            <!-- <div id="err-container">
+                <div id="err-div">
+                    Disconnected from ESP32!
+                </div>
+            </div> -->
+        </div>
+    </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

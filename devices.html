@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono" rel="stylesheet">
+
+<head>
+    <link rel="stylesheet" href="./style.css">
+
+    <title>ESP Input Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="./p5.js"></script>
+    <script src="./hygrometers.js"></script>
+    <script src="./devices.js"></script>
+    <script src="./logs.js"></script>
+    <script src="./display.js"></script>
+    <script src="./system.js"></script>
+    <script src="./modules.js"></script>
+    <script src="./display_html.js"></script>
+    <script src="./connection.js"></script>
+
+    <script src="./fGMS_REST.js"></script>
+
+    <script>
+        let devices_display = new DevicesDisplay("modules_display");
+        function ui_updateModules() {
+            devices_display.refresh();
+        }
+
+        setInterval(ui_updateModules, 100);
+    </script>
+
+</head>
+
+<body>
+    <div class="center">
+        <div class="card">
+            <div class="ui-container" style="align-items: center; justify-content: space-around;">
+                <div>
+                    <div style="text-align: center; font-size: 50px;">Ata Tohum</div>
+                    <div style="text-align: center;">Modular Greenhouse System</div>
+                </div>
+                <div style="text-align: center;font-size: 50px; margin-inline: 25px;">Modules</div>
+            </div>
+            <div id="container" style="overflow-y: scroll; max-height: 50vh;">
+                <br>
+
+                <div class="ui-container-grid" id="modules_display">
+                    <div class="panel" style="text-align: center; font-size: 50px;" id="wait_data">Waiting for data.
+                    </div>
+                    <!-- <div id="MACMAC" class="panel">
+                    <div style="text-align: center; font-size: 60px;">HYGRO A</div>
+                    <div class="ui-container-vertical">
+
+                        <div class="panel-value ui-container" style="margin: 5px; justify-content: space-between;">
+                            <div style="margin-inline:5px; white-space: nowrap;">Chip ID :
+                            </div>
+                            <div style="font-weight: 900; color:beige; margin-inline:5px;">AAAAAAA
+                            </div>
+                        </div>
+
+                        <div class="panel-value ui-container" style="margin: 5px; justify-content: space-between;">
+                            <div style="margin-inline:5px; white-space: nowrap;">Online :
+                            </div>
+                            <div style="font-weight: 900; color:red; margin-inline:5px;">NO
+                            </div>
+                        </div>
+
+                        <div class="panel-value ui-container" style="margin: 5px; justify-content: space-between;">
+                            <div style="margin-inline:5px;  white-space: nowrap;">Type :
+                            </div>
+                            <div style="font-weight: 900; color:beige; margin-inline:5px; white-space: nowrap;">
+                                HygroCtl
+                            </div>
+                        </div>
+
+                        <div class="panel-value ui-container" style="margin: 5px; justify-content: space-between;">
+                            <div style="margin-inline:5px;  white-space: nowrap;">Ping :
+                            </div>
+                            <div style="font-weight: 900; color:beige; margin-inline:5px; white-space: nowrap;">
+                                100 ms
+                            </div>
+                        </div>
+
+                        <div style="justify-content: space-between;" class="ui-container panel-value">
+                            <button onclick="ui_setHygrometer()" class="input-button" id="add_set_btn">Restart</button>
+                            <button onclick="ui_removeHygrometer()" class="input-button" id="remove_btn">Remove</button>
+                        </div>
+                    </div>
+                </div> -->
+                </div>
+            </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
